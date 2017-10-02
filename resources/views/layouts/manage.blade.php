@@ -444,7 +444,7 @@
 
     </div>
             <!-- Dropdown-->
-        <li><a href="#"><span class="glyphicon glyphicon-signal"></span>Manage User</a></li>
+        <li><a href="{{ url('/manage/users') }}"><span class="glyphicon glyphicon-signal"></span>Manage User</a></li>
         <li><a href="#"><span class="glyphicon glyphicon-signal"></span>Roles & Permissions</a></li>
 
         </ul>
@@ -484,6 +484,7 @@
     });
 });
     </script>
+    @yield('script')
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 </body>
 </html>
