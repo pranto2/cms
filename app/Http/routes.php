@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::auth();
+
+Route::group( [ 'prefix' => 'manage', 'middleware' => 'role:superadministrator|administrator|editor|author|contributor' ], function()
+{
+    Route::get('/dashboard', 'ManageController@dashboard')->name('manage.dashboard');
+    
+});
+
+Route::get('/home', 'HomeController@index');
