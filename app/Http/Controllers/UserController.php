@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Hash;
+
+use App\Http\Controllers\Controller;
+
 use App\Http\Requests;
 
 use App\User;
@@ -17,7 +21,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id', 'desc')->paginate(10);
+        $users = User::orderBy('id', 'desc')->paginate(15);
         return view('manage.users.index')->with([ 'users' => $users ]);
     }
 
@@ -41,40 +45,24 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:255',
-            'email' => 'required|enail|unique:users'
+            'email' => 'required|email|unique:users',
+            'password' => 'required'
         ]);
 
-        if (Request::has('password') &&  !empty($request->password)) {
-            $password = trim($request->password);
-        }
-        else {
-            $length = 10;
-            $keyspace = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $str = '';
-            $max = mb_strlen($keyspace, '8bit') -1;
-            for ($i=0; $i < $length ; ++$i) { 
-                $str = $keyspace[random_int(0, $max)];
-            }
-            $password = $str;
-        
-        }
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($password);
-        $user->save();
-
+        $user->password = Hash::make($request->password);
 
         if ($user->save()) {
-            return redirect()->route('users.show', $user->id);
+            return redirect('manage/users');
         }
             else {
                 Session::flash('danger', 'Sorry, Something Wrong.');
-                return redirect()->route('users/create');
+                return redirect()->route('manage.users.create');
             }
         
     }
-
     /**
      * Display the specified resource.
      *
@@ -83,8 +71,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $users = User::findOrFail($id);
-        return view('manage.users.show')->with(['users'=>$users]);
+        $user = User::find($id);
+        return view('manage.users.show')->with(['user'=>$user]);
     }
 
     /**
@@ -95,8 +83,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $users = User::findOrFail($id);
-        return view("manage.users.edit")->with(['users'=>$users]);
+        $user = User::find($id);
+        return view('manage.users.edit')->with(['user'=>$user]);
     }
 
     /**
@@ -108,7 +96,14 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique,email,'.$id
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
     }
 
     /**

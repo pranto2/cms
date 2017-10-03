@@ -25,8 +25,12 @@
 			      <td> {{$user->name}} </td>
 			      <td> {{$user->email}} </td>
 			      <td> {{$user->created_at->toFormattedDateString()}} </td>
-			      <td><a href="{{'users/edit/'.$user->id}}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-					</a></td>
+			      <td>
+			      	<a href="{{'users/edit/'.$user->id}}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+					</a>
+					<a href=" {{'users/show/'.$user->id}} "><i class="fa fa-eye" aria-hidden="true"></i>
+					</a>
+				</td>
 			    </tr>
 			    @endforeach
 			  </tbody>
